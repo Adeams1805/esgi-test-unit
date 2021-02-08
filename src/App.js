@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import './app.scss';
-import { testAll } from './Test';
 import ToDoList from './components/ToDoList';
 import Item from './components/Item';
 import User from './components/User';
@@ -152,8 +151,6 @@ export const App = () => {
         <button type="button" onClick={() => remplir(0)}>Vider</button>
       </div>
       }
-
-      <button type="button" className="testBtn" onClick={() => testAll()}>Tests</button>
     </div>
   );
 }
