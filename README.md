@@ -1,15 +1,19 @@
 # Getting Started
 
 Il faut avoir **node** installé sur son ordinateur (personnellement j'ai la version 12.5.0).
-Après avoir clone le repository, il faut installer les dependencies :
+Après avoir clone le repository, il faut installer les dependencies dans la racine et /react-backend :
 
     npm install
 
 ## Lancer l'application
 
+Dans la racine :
     npm start
 
-## Tester EmailService (mock)
+Gand /react-backend :
+    PORT=3001 npm start
+
+## Tests
 
     npm test
 
