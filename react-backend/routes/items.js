@@ -18,13 +18,14 @@ router.get('/', function(req, res, next) {
 
 /* POST items */
 router.post('/', function(req, res, next) {
-  items.push({
+  const it = {
     id: items.length+1,
-    idList: req.body.idList,
     name: req.body.name,
     content: req.body.content,
     createdAt: req.body.createdAt
-  })
+  };
+  items.push(it);
+  res.send(it);
   res.end();
 });
 
