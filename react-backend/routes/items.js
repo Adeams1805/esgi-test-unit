@@ -20,9 +20,11 @@ router.get('/', function(req, res, next) {
 router.post('/', function(req, res, next) {
   items.push({
     id: items.length+1,
-    username: req.body.username
+    idList: req.body.idList,
+    name: req.body.name,
+    content: req.body.content,
+    createdAt: req.body.createdAt
   })
-  res.send('posted');
   res.end();
 });
 

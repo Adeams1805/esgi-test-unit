@@ -14,25 +14,16 @@ export default class ToDoList {
 
         if(it.isValid()) {
             //check moins de 10 items
-            if(this.items.length >= 10) {
-                console.log("Une ToDoList ne peut pas avoir plus de 10 items");
-                return false;
-            }
+            if(this.items.length >= 10) return false;
 
             //check name unique
-            if(this.items.find(el => el.name === name) !== undefined) {
-                console.log("Les items doivent avoir un nom unique");
-                return false;
-            }
+            if(this.items.find(el => el.name === name) !== undefined) return false;
 
             //check 30 min
             if(this.items.length !== 0) {
                 const currentItemDate = moment(createdAt.toJSON());
-                const lastItemDate = moment(this.items[this.items.length-1].createdAt.toJSON());
-                if(currentItemDate.diff(lastItemDate, "minutes") < 30) {
-                    console.log("Vous devez attendre 30 min avant de pouvoir ajouter un nouvel item");
-                    return false;
-                }
+                const lastItemDate = moment(new Date(this.items[this.items.length-1].createdAt).toJSON());
+                if(currentItemDate.diff(lastItemDate, "minutes") < 30) return false;
             }
 
             //envoi mail au 8eme item

@@ -4,6 +4,7 @@ import ToDoList from './components/ToDoList';
 import Item from './components/Item';
 import User from './components/User';
 import moment from 'moment';
+import { postItem } from './routes';
 
 export const App = () => {
   const [firstname, setFirstname] = useState("");
@@ -16,9 +17,6 @@ export const App = () => {
   const [itemName, setItemName] = useState("");
   const [itemContent, setItemContent] = useState("");
   const [adding, setAdding] = useState(false);
-
-  
-  const [users, setUsers] = useState([]);
 
   const login = (e) => {
     e.preventDefault();
@@ -37,7 +35,7 @@ export const App = () => {
         ddn: user.ddn,
         pwd: user.mdp
       }));
-      setToDo(new ToDoList(user, []));
+      //setToDo(new ToDoList(user, []));
       setFirstname("");
       setLastname("");
       setEmail("");
@@ -55,39 +53,47 @@ export const App = () => {
   }
 
   const handleAdd = () => {
-    if(todo.add(itemName, itemContent, new Date())) {
-      setAdding(false);
-      setItemName("");
-      setItemContent("");
-    }
-  }
-
-  const remplir = (n) => {
-    let t = [];
-    for(let i=0; i<n; i++) {
-      t.push(new Item({name: `test ${i}`, content: "Placeholder", createdAt: new Date(moment().subtract(30, "minutes").format())}))
-    }
-    setToDo(new ToDoList(todo.user, t));
+    postItem(itemName, itemContent, new Date().toJSON())
+    .then(function(response){
+      if(response.status === 200 && todo.add(itemName, itemContent, new Date())) {
+        setAdding(false);
+        setItemName("");
+        setItemContent("");
+      }
+    })
   }
 
   useEffect(() => {
+    if(todo === null) {
       fetch('/items')
       .then(res => res.json())
-      .then(users => setUsers(users));
+      .then(items => setToDo(new ToDoList(new User({
+          prenom: JSON.parse(localStorage.getItem("user")).firstname, 
+          nom: JSON.parse(localStorage.getItem("user")).lastname, 
+          email: JSON.parse(localStorage.getItem("user")).email, 
+          ddn: JSON.parse(localStorage.getItem("user")).ddn,
+          mdp: JSON.parse(localStorage.getItem("user")).pwd
+        }),
+        items.map(it => new Item({
+          name: it.name,
+          content: it.content,
+          createdAt: it.createdAt
+        }))
+      )));
+    }
   }, []);
 
   //page s'actualise
-  if(todo === null && localStorage.getItem("user") !== null) setToDo(new ToDoList(new User({
+  /*if(todo === null && localStorage.getItem("user") !== null) setToDo(new ToDoList(new User({
     prenom: JSON.parse(localStorage.getItem("user")).firstname, 
     nom: JSON.parse(localStorage.getItem("user")).lastname, 
     email: JSON.parse(localStorage.getItem("user")).email, 
     ddn: JSON.parse(localStorage.getItem("user")).ddn,
     mdp: JSON.parse(localStorage.getItem("user")).pwd
-  }), []));
+  }), []));*/
 
   return (
     <div className="App">
-      {console.log(users)}
       {localStorage.getItem("user") === null ?
       <div className="connexion">
         <form className="connexionForm" onSubmit={(e) => login(e)}>
@@ -155,10 +161,6 @@ export const App = () => {
             }
           </div>
         </div>
-
-        <button type="button" onClick={() => remplir(7)}>Ajouter 7 il y a 30 minutes</button>
-        <button type="button" onClick={() => remplir(10)}>Remplir</button>
-        <button type="button" onClick={() => remplir(0)}>Vider</button>
       </div>
       }
     </div>
