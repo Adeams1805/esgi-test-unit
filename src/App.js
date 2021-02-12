@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './app.scss';
 import ToDoList from './components/ToDoList';
 import Item from './components/Item';
@@ -16,6 +16,9 @@ export const App = () => {
   const [itemName, setItemName] = useState("");
   const [itemContent, setItemContent] = useState("");
   const [adding, setAdding] = useState(false);
+
+  
+  const [users, setUsers] = useState([]);
 
   const login = (e) => {
     e.preventDefault();
@@ -67,6 +70,12 @@ export const App = () => {
     setToDo(new ToDoList(todo.user, t));
   }
 
+  useEffect(() => {
+      fetch('/items')
+      .then(res => res.json())
+      .then(users => setUsers(users));
+  }, []);
+
   //page s'actualise
   if(todo === null && localStorage.getItem("user") !== null) setToDo(new ToDoList(new User({
     prenom: JSON.parse(localStorage.getItem("user")).firstname, 
@@ -78,6 +87,7 @@ export const App = () => {
 
   return (
     <div className="App">
+      {console.log(users)}
       {localStorage.getItem("user") === null ?
       <div className="connexion">
         <form className="connexionForm" onSubmit={(e) => login(e)}>
